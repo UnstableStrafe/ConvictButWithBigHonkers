@@ -13,20 +13,30 @@ namespace ConvictButWithBigHonkers
     public class StartThisCursedMod : ETGModule
     {
         public static readonly string Color = "#FCA4E2";
-
+        public static string ZipFilePath;
+        public static string FilePath;
         public override void Init()
         {
 
         }
         public override void Start()
         {
-            FakePrefabHooks.Init();
-            ItemBuilder.Init();
-            
-            HonkerPistol.Add();
-            HonkerShotgun.Add();
-            Hooks();
-            Log("Convict now has massive honkers, you sick fuck.", Color);
+            try
+            {
+                ZipFilePath = this.Metadata.Archive;
+                FilePath = this.Metadata.Directory;
+                FakePrefabHooks.Init();
+                ItemBuilder.Init();
+                AudioResourceLoader.InitAudio();
+
+                HonkerPistol.Add();
+                HonkerShotgun.Add();
+                Hooks();
+                Log("Convict now has massive honkers, you sick fuck.", Color);
+            }catch (Exception e)
+            {
+                Log($"{e}");
+            }
            
         }
 
@@ -66,11 +76,13 @@ namespace ConvictButWithBigHonkers
             {
                 yield return null;
             }
-            
+            object cc = player.GetComponent("CustomCharacter");
             if (!hasTakenDamage() && GameManager.Instance.CurrentFloor == getStartingFloor())
             {
-                if (player.characterIdentity == PlayableCharacters.Convict)
+                if (player.characterIdentity == PlayableCharacters.Convict && player.inventory.ContainsGun(PickupObjectDatabase.GetById(80).PickupObjectId) && player.inventory.ContainsGun(PickupObjectDatabase.GetById(202).PickupObjectId) && cc == null)
                 {
+                    //player.inventory.DestroyGun(PickupObjectDatabase.GetById(80) as Gun);
+                    //player.inventory.DestroyGun(PickupObjectDatabase.GetById(202) as Gun);
                     player.inventory.DestroyAllGuns();
 
                     player.inventory.AddGunToInventory(ETGMod.Databases.Items["sawed-off_honker"] as Gun, false);
