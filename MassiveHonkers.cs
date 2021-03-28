@@ -9,9 +9,10 @@ namespace ConvictButWithBigHonkers
 {
     class HonkerPistol : AdvancedGunBehaviour
     {
+        private static Gun BRevolv;
         public static void Add()
         {
-            Gun BRevolv = (PickupObjectDatabase.GetById(80) as Gun);
+             BRevolv = (PickupObjectDatabase.GetById(80) as Gun);
 
             Gun gun = ETGMod.Databases.Items.NewGun("Budget Honker", "budget_honker");
             Game.Items.Rename("outdated_gun_mods:budget_honker", "honkies:budget_honker");
@@ -61,15 +62,23 @@ namespace ConvictButWithBigHonkers
             if (gun.CurrentOwner)
             {
 
-                if (gun.PreventNormalFireAudio)
+                if (!gun.PreventNormalFireAudio)
                 {
                     this.gun.PreventNormalFireAudio = true;
                 }
+                if (!BRevolv.PreventNormalFireAudio)
+                    BRevolv.PreventNormalFireAudio = true;
                 if (!gun.IsReloading && !HasReloaded)
                 {
                     this.HasReloaded = true;
                 }
             }
+        }
+        public override void OnPostFired(PlayerController player, Gun gun)
+        {
+            BRevolv.PreventNormalFireAudio = true;
+            gun.PreventNormalFireAudio = true;
+            AkSoundEngine.PostEvent("Play_Trumpet_Honk", gameObject);
         }
         public HonkerPistol()
         {
@@ -78,9 +87,10 @@ namespace ConvictButWithBigHonkers
     }
     class HonkerShotgun: AdvancedGunBehaviour
     {
+        private static Gun SHonk;
         public static void Add()
         {
-            Gun SHonk = (PickupObjectDatabase.GetById(202) as Gun);
+             SHonk = (PickupObjectDatabase.GetById(202) as Gun);
 
             Gun gun = ETGMod.Databases.Items.NewGun("Sawed-off Honker", "sawed-off_honker");
             Game.Items.Rename("outdated_gun_mods:sawed-off_honker", "honkies:sawed-off_honker");
@@ -133,8 +143,6 @@ namespace ConvictButWithBigHonkers
             gun.sprite.IsPerpendicular = true;
             gun.barrelOffset.transform.localPosition = new Vector3(1.625f, 0.5f, 0f);
             gun.gunClass = SHonk.gunClass;
-
-            SHonk.quality = PickupObject.ItemQuality.EXCLUDED;
             
             ETGMod.Databases.Items.Add(gun, null, "ANY");
         }
@@ -145,15 +153,23 @@ namespace ConvictButWithBigHonkers
             if (gun.CurrentOwner)
             {
 
-                if (gun.PreventNormalFireAudio)
+                if (!gun.PreventNormalFireAudio)
                 {
                     this.gun.PreventNormalFireAudio = true;
                 }
+                if(!SHonk.PreventNormalFireAudio)
+                    SHonk.PreventNormalFireAudio = true;
                 if (!gun.IsReloading && !HasReloaded)
                 {
                     this.HasReloaded = true;
                 }
             }
+        }
+        public override void OnPostFired(PlayerController player, Gun gun)
+        {
+            SHonk.PreventNormalFireAudio = true;
+            gun.PreventNormalFireAudio = true;
+            AkSoundEngine.PostEvent("Play_Trombone_Honk", gameObject);
         }
         public HonkerShotgun()
         {
